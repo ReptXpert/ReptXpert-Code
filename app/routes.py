@@ -1,17 +1,13 @@
 #Bis und mit Zeile 199 mehrheitlich aus Emanuel Grimbergs Blog übernommen
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, \
-    EmptyForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm, TerrariumForm
-from app.models import User, Post, Terrarium
-from app.email import send_password_reset_email
-from flask_appbuilder import expose
-from flask_appbuilder.models.sqla.interface import SQLAInterface
-from flask_appbuilder.views import ModelView
-
+    EmptyForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm, TerrariumForm, EventForm
+from app.models import User, Post, Terrarium, Event
+from app.email import send_password_reset_email, send_email
 
 @app.before_request
 def before_request():
@@ -257,4 +253,53 @@ def edit_terrarium(terrarium_id):
         flash('Terrarium erfolgreich bearbeitet!', 'success')
         return redirect(url_for('terrarium', terrarium_id=terrarium_id))
     return render_template('edit_terrarium.html', title='Terrarium bearbeiten', form=form)
+
+@app.route('/calendar')
+@login_required
+def calendar():
+    today = datetime.utcnow()
+    events = Event.query.filter_by(user_id=current_user.id).order_by(Event.start_time).all()
+    return render_template('user.html', events=events, today=today)
+
+@app.route('/event/create', methods=['GET', 'POST'])
+@login_required
+def create_event():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        start_time = datetime.strptime(request.form.get('start_time'), '%Y-%m-%dT%H:%M')
+        end_time = datetime.strptime(request.form.get('end_time'), '%Y-%m-%dT%H:%M')
+        description = request.form.get('description')
+        event = Event(title=title, start_time=start_time, end_time=end_time, description=description, user_id=current_user.id)
+        db.session.add(event)
+        db.session.commit()
+        flash('Event created successfully!', 'success')
+        return redirect(url_for('calendar'))
+    return render_template('create_event.html')
+
+@app.route('/event/edit/<int:event_id>', methods=['GET', 'POST'])
+@login_required
+def edit_event(event_id):
+    event = Event.query.get_or_404(event_id)
+    if event.user_id != current_user.id:
+        abort(403)
+    if request.method == 'POST':
+        event.title = request.form.get('title')
+        event.start_time = datetime.strptime(request.form.get('start_time'), '%Y-%m-%dT%H:%M')
+        event.end_time = datetime.strptime(request.form.get('end_time'), '%Y-%m-%dT%H:%M')
+        event.description = request.form.get('description')
+        db.session.commit()
+        flash('Event updated successfully!', 'success')
+        return redirect(url_for('calendar'))
+    return render_template('edit_event.html', event=event)
+
+@app.route('/event/delete/<int:event_id>', methods=['POST'])
+@login_required
+def delete_event(event_id):
+    event = Event.query.get_or_404(event_id)
+    if event.user_id != current_user.id:
+        abort(403)
+    db.session.delete(event)
+    db.session.commit()
+    flash('Event deleted successfully!', 'success')
+    return redirect(url_for('calendar'))
 

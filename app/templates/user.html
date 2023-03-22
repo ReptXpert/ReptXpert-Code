@@ -45,11 +45,22 @@
             </p>
         {% endif %}
     {% endfor %}
-    {% for event in terrarium.events %}
-        {% include '_events.html' %}
+    <p>
+        <a href="{{ url_for('create_event') }}" class="btn btn-primary">Neues Ereignis erstellen</a>
+    </p>
+    {% for event in user.events %}
+        {% include '_event.html' %}
+        {% if current_user.id == event.user_id %}
+            <p>
+                <a href="{{ url_for('edit_event', event_id=event.id) }}" class="btn btn-primary">Ereignis bearbeiten</a>
+                <form action="{{ url_for('delete_event', event_id=event.id) }}" method="post" style="display:inline-block;">
+                    {{ form.hidden_tag() }}
+                    <button type="submit" class="btn btn-danger">Löschen</button>
+                </form>
+            </p>
+        {% endif %}
     {% endfor %}
-    <a href="{{ url_for('events', terrarium_id=terrarium.id) }}" class="btn btn-primary">Termine</a>
-<!-- Bis und mit Zeile 80 von Emanuel Grimbergs Microblog übernommen -->    
+   <!-- Bis und mit Zeile 80 von Emanuel Grimbergs Microblog übernommen -->    
     <nav aria-label="...">
         <ul class="pager">
             <li class="vorherige{% if not prev_url %} disabled{% endif %}">

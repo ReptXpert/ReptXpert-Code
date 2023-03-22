@@ -108,4 +108,14 @@ class Terrarium(db.Model):
 def __repr__(self):
     return f"Terrarium('{self.name}')"
 
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    end_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    description = db.Column(db.Text, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    terrarium_id = db.Column(db.Integer, db.ForeignKey('terrarium.id'), nullable=False)
 
+    def __repr__(self):
+        return '<Event %r>' % self.title

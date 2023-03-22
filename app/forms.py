@@ -81,7 +81,16 @@ class TerrariumForm(FlaskForm):
     sunset_time = TimeField('Sunset Time', validators=[DataRequired()])
     notes = TextAreaField('Notes', validators=[Length(min=0, max=140)])
     submit = SubmitField('Submit')
+    
 
+class EventForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    start_time = DateTimeField('Start Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    end_time = DateTimeField('End Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    description = TextAreaField('Description')
+    submit = SubmitField('Submit')
+    
+    
 
 
 
