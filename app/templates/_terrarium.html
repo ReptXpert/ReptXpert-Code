@@ -1,0 +1,29 @@
+<!-- Eigener Code -->
+{% for terrarium in terrariums %}
+{% if current_user == terrarium.user %}
+    <p>
+        <a href="{{ url_for('edit_terrarium', terrarium_id=terrarium.id) }}" class="btn btn-primary">Terrarium bearbeiten</a>
+        <form action="{{ url_for('delete_terrarium', terrarium_id=terrarium.id) }}" method="post" style="display:inline-block;">
+            {{ form.hidden_tag() }}
+            <input type="submit" value="Terrarium löschen" class="btn btn-danger">
+        </form>
+    </p>
+{% endif %}
+    <div class="card">
+        <div class="card-header">{{ terrarium.name }}</div>
+        <div class="card-body">
+            <p class="card-text">{{ terrarium.notes }}</p>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Name: {{ terrarium.name }}</li>
+                <li class="list-group-item">Size: {{ terrarium.size }}</li>
+                <li class="list-group-item">Optimal Humidity: {{ terrarium.optimal_humidity }}</li>
+                <li class="list-group-item">Optimal Temperature: {{ terrarium.optimal_temperature }}</li>
+                <li class="list-group-item">Actual Humidity: {{ terrarium.actual_humidity }}</li>
+                <li class="list-group-item">Actual Temperature: {{ terrarium.actual_temperature }}</li>
+                <li class="list-group-item">Country: {{ terrarium.country }}</li>
+                <li class="list-group-item">Sunrise Time: {{ terrarium.sunrise_time }}</li>
+                <li class="list-group-item">Sunset Time: {{ terrarium.sunset_time }}</li>
+            </ul>
+        </div>
+    </div>
+{% endfor %}

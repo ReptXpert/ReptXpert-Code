@@ -1,0 +1,84 @@
+<!-- Bis und mit Zeile 34 von Emanuel Grimbergs Microblog übernommen -->
+{% extends "base.html" %}
+
+{% block app_content %}
+    <table class="table table-hover">
+        <tr>
+            <td width="256px"><img src="{{ user.avatar(256) }}"></td>
+            <td>
+                <h1>Benutzer: {{ user.username }}</h1>
+                {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+                {% if user.last_seen %}
+                <p>Zuletzt gesehen: {{ moment(user.last_seen).format('LLL') }}</p>
+                {% endif %}
+                <p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p>
+                {% if user == current_user %}
+                <p><a href="{{ url_for('edit_profile') }}">Bearbeite dein Profil</a></p>
+                {% elif not current_user.is_following(user) %}
+                <p>
+                    <form action="{{ url_for('follow', username=user.username) }}" method="post">
+                        {{ form.hidden_tag() }}
+                        {{ form.submit(value='Follow', class_='btn btn-default') }}
+                    </form>
+                </p>
+                {% else %}
+                <p>
+                    <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
+                        {{ form.hidden_tag() }}
+                        {{ form.submit(value='Unfollow', class_='btn btn-default') }}
+                    </form>
+                </p>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+<!-- Bis und mit Zeile 50 eigener Code -->   
+    {% for terrarium in user.terrariums %}
+        {% include '_terrarium.html' %}
+        {% if current_user.id == terrarium.user_id %}
+            <p>
+                <a href="{{ url_for('edit_terrarium', terrarium_id=terrarium.id) }}" class="btn btn-primary">Terrarium bearbeiten</a>
+                <form action="{{ url_for('delete_terrarium', terrarium_id=terrarium.id) }}" method="post" style="display:inline-block;">
+                    {{ form.hidden_tag() }}
+                    <button type="submit" class="btn btn-danger">Löschen</button>
+                </form>
+            </p>
+        {% endif %}
+    {% endfor %}
+    {% for event in terrarium.events %}
+        {% include '_events.html' %}
+    {% endfor %}
+    <a href="{{ url_for('events', terrarium_id=terrarium.id) }}" class="btn btn-primary">Termine</a>
+<!-- Bis und mit Zeile 80 von Emanuel Grimbergs Microblog übernommen -->    
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="vorherige{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">←</span> vorheriges Terrarium
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Nächstes Terrarium<span aria-hidden="true">→</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    {% for post in user.posts %}
+        {% include '_post.html' %}
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="vorherige{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Neuere Beiträge
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Ältere Beiträge <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endblock %}
