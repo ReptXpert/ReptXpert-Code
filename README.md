@@ -1,7 +1,3 @@
-# Welcome to Microblog!
+# Welcome to ReptXpert!
 
-This is an example application featured in my [Flask Mega-Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world). See the tutorial for instructions on how to work with it.
-"# ReptXpert" 
-"# ReptXpert" 
-"# ReptXpert" 
-"# ReptXpert" 
+This is an example application for my school - based on Miguel Grinbers Microblog: https://github.com/miguelgrinberg
