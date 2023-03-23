@@ -1,7 +1,7 @@
 #Bis und mit Zeile 70 mehrheitlich aus Emanuel Grimbergs Blog übernommen
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-    TextAreaField, FloatField, IntegerField, TimeField, HiddenField, DateTimeField
+    TextAreaField, FloatField, IntegerField, TimeField, HiddenField, DateField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length, NumberRange
 from app.models import User
@@ -71,24 +71,26 @@ class PostForm(FlaskForm):
 class TerrariumForm(FlaskForm):
     terrarium_id = HiddenField()
     name = StringField('Name', validators=[DataRequired(), Length(min=1, max=64)])
-    size = FloatField('Size', validators=[DataRequired(), NumberRange(min=0.0, max=100.0)])
-    optimal_humidity = IntegerField('Optimal Humidity', validators=[DataRequired(), NumberRange(min=0, max=100)])
-    optimal_temperature = IntegerField('Optimal Temperature', validators=[DataRequired(), NumberRange(min=0, max=100)])
-    actual_humidity = IntegerField('Actual Humidity', validators=[DataRequired(), NumberRange(min=0, max=100)])
-    actual_temperature = IntegerField('Actual Temperature', validators=[DataRequired(), NumberRange(min=0, max=100)])
-    country = StringField('Country', validators=[DataRequired(), Length(min=1, max=64)])
-    sunrise_time = TimeField('Sunrise Time', validators=[DataRequired()])
-    sunset_time = TimeField('Sunset Time', validators=[DataRequired()])
-    notes = TextAreaField('Notes', validators=[Length(min=0, max=140)])
-    submit = SubmitField('Submit')
+    size = FloatField('Grösse', validators=[DataRequired(), NumberRange(min=0.0, max=100.0)])
+    optimal_humidity = IntegerField('Optimale Luftfeuchtigkeit', validators=[DataRequired(), NumberRange(min=0, max=100)])
+    optimal_temperature = IntegerField('Optimale Temperatur', validators=[DataRequired(), NumberRange(min=0, max=100)])
+    actual_humidity = IntegerField('Aktuelle Luftfeuchtigkeit', validators=[DataRequired(), NumberRange(min=0, max=100)])
+    actual_temperature = IntegerField('Aktuelle Temperatur', validators=[DataRequired(), NumberRange(min=0, max=100)])
+    country = StringField('Land', validators=[DataRequired(), Length(min=1, max=64)])
+    sunrise_time = TimeField('Sonnenaufgang', validators=[DataRequired()])
+    sunset_time = TimeField('Sonnenuntergang', validators=[DataRequired()])
+    notes = TextAreaField('Notizen', validators=[Length(min=0, max=140)])
+    submit = SubmitField('Absenden')
     
 
 class EventForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    start_time = DateTimeField('Start Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
-    end_time = DateTimeField('End Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
-    description = TextAreaField('Description')
-    submit = SubmitField('Submit')
+    title = StringField('Titel', validators=[DataRequired()])
+    start_date = DateField('Start Datum', validators=[DataRequired()], format='%d-%m-%y')
+    start_time = TimeField('Start Zeit', validators=[DataRequired()], format='%H:%M')
+    end_date = DateField('End Datum', validators=[DataRequired()], format='%d-%m-%y')
+    end_time = TimeField('End Zeit', validators=[DataRequired()], format='%H:%M')
+    location = StringField('Ort')
+    submit = SubmitField('Absenden')
     
     
 

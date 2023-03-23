@@ -259,47 +259,55 @@ def edit_terrarium(terrarium_id):
 def calendar():
     today = datetime.utcnow()
     events = Event.query.filter_by(user_id=current_user.id).order_by(Event.start_time).all()
-    return render_template('user.html', events=events, today=today)
+    return render_template('calendar.html', events=events, today=today)
+
+from app.forms import EventForm
 
 @app.route('/event/create', methods=['GET', 'POST'])
 @login_required
 def create_event():
-    if request.method == 'POST':
-        title = request.form.get('title')
-        start_time = datetime.strptime(request.form.get('start_time'), '%Y-%m-%dT%H:%M')
-        end_time = datetime.strptime(request.form.get('end_time'), '%Y-%m-%dT%H:%M')
-        description = request.form.get('description')
-        event = Event(title=title, start_time=start_time, end_time=end_time, description=description, user_id=current_user.id)
+    form = EventForm()
+    if form.validate_on_submit():
+        event = Event(
+            title=form.title.data,
+            description=form.description.data,
+            start_time=datetime.combine(form.start_date.data, form.start_time.data),
+            end_time=datetime.combine(form.end_date.data, form.end_time.data),
+            location=form.location.data,
+            creator=current_user
+        )
         db.session.add(event)
         db.session.commit()
-        flash('Event created successfully!', 'success')
+        flash('Der Event wurde erfolgreich erstellt', 'success')
         return redirect(url_for('calendar'))
-    return render_template('create_event.html')
+    return render_template('create_event.html', title='Create Event', form=form)
+
 
 @app.route('/event/edit/<int:event_id>', methods=['GET', 'POST'])
 @login_required
 def edit_event(event_id):
+    form = EventForm()
     event = Event.query.get_or_404(event_id)
     if event.user_id != current_user.id:
-        abort(403)
+        flash('Du hast keine Berechtigung, diesen Event zu bearbeiten.', 'danger')
     if request.method == 'POST':
         event.title = request.form.get('title')
-        event.start_time = datetime.strptime(request.form.get('start_time'), '%Y-%m-%dT%H:%M')
-        event.end_time = datetime.strptime(request.form.get('end_time'), '%Y-%m-%dT%H:%M')
+        event.start_time = datetime.combine(form.start_date.data, form.start_time.data)
+        event.end_time = datetime.combine(form.end_date.data, form.end_time.data)
         event.description = request.form.get('description')
         db.session.commit()
-        flash('Event updated successfully!', 'success')
+        flash('Der Event wurde erfolgreich aktualisiert', 'success')
         return redirect(url_for('calendar'))
-    return render_template('edit_event.html', event=event)
+    return render_template('edit_event.html', event=event, form=form)
 
 @app.route('/event/delete/<int:event_id>', methods=['POST'])
 @login_required
 def delete_event(event_id):
     event = Event.query.get_or_404(event_id)
     if event.user_id != current_user.id:
-        abort(403)
+        flash('Du hast keine Berechtigung, diesen Event zu bearbeiten.', 'danger')
     db.session.delete(event)
     db.session.commit()
-    flash('Event deleted successfully!', 'success')
+    flash('Der Event wurde erfolgreich gelöscht', 'success')
     return redirect(url_for('calendar'))
 
