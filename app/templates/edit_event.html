@@ -1,0 +1,37 @@
+<!-- Eigener Code -->
+{% extends "base.html" %}
+{% block content %}
+  <h1>Bearbeite Event</h1>
+  {% if event %}
+    <form method="POST" action="{{ url_for('edit_event', event_id=event.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group">
+        <label for="title">Titel</label>
+        <input type="text" class="form-control" name="title" value="{{ event.title }}">
+      </div>
+      <div class="form-group">
+        <label for="start_date">Start Datum</label>
+        <input type="date" class="form-control" name="start_date" value="{{ event.start_time.date() }}">
+      </div>
+      <div class="form-group">
+        <label for="start_time">Start Zeit</label>
+        <input type="time" class="form-control" name="start_time" value="{{ event.start_time.time() }}">
+      </div>
+      <div class="form-group">
+        <label for="end_date">End Datum</label>
+        <input type="date" class="form-control" name="end_date" value="{{ event.end_time.date() }}">
+      </div>
+      <div class="form-group">
+        <label for="end_time">End Zeit</label>
+        <input type="time" class="form-control" name="end_time" value="{{ event.end_time.time() }}">
+      </div>
+      <div class="form-group">
+        <label for="description">Beschreibung</label>
+        <textarea class="form-control" name="description">{{ event.description }}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Update Event</button>
+    </form>
+  {% else %}
+    <p>Event not found.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+<!-- Eigener Code -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>My Calendar</h1>
+  <p>Today is {{ today.strftime('%A, %B %d, %Y') }}.</p>
+  <div>
+    <a href="{{ url_for('create_event') }}"><button>Erstelle Event</button></a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Event</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for event in events %}
+        <tr>
+          <td>{{ event.start_time.strftime('%A, %B %d, %Y at %I:%M %p') }}</td>
+          <td>{{ event.end_time.strftime('%A, %B %d, %Y at %I:%M %p') }}</td>
+          <td>{{ event.title }}</td>
+          <td>
+            <a href="{{ url_for('edit_event', event_id=event.id) }}"><button>Bearbeiten</button></a>
+            <a href="{{ url_for('delete_event', event_id=event.id) }}"><button>löschen</button></a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>All Events</h2>
+  <ul>
+    {% for event in all_events %}
+      <li>{{ event.title }} - {{ event.start_time.strftime('%A, %B %d, %Y at %I:%M %p') }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

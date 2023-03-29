@@ -1,0 +1,18 @@
+<!-- Aus Emanuel Grimbergs Blog übernommen -->
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Sign In</h1>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+    <br>
+    <p>Neuer Benutzer? <a href="{{ url_for('register') }}">Hier klicken zum registrieren</a></p>
+    <p>
+        Passwort vergessen?
+        <a href="{{ url_for('reset_password_request') }}">Passwort vergessen</a>
+    </p>
+{% endblock %}

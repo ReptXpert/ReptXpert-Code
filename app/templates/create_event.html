@@ -1,0 +1,33 @@
+<!-- Eigener Code -->
+{% extends "base.html" %}
+{% block content %}
+  <h1>Event</h1>
+  <form method="POST" action="{{ url_for('create_event') }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.title.label }} {{ form.title(size=20) }}
+    </div>
+    <div class="form-group">
+      {{ form.description.label }} {{ form.description(rows=5) }}
+    </div>
+    <div class="form-group">
+      {{ form.start_date.label }} {{ form.start_date(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.start_time.label }} {{ form.start_time(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.end_date.label }} {{ form.end_date(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.end_time.label }} {{ form.end_time(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.location.label }} {{ form.location(size=20) }}
+    </div>
+    <div class="form-group">
+      {{ form.terrarium.label }} {{ form.terrarium(class="form-control") }}
+    </div>
+    <button type="submit" class="btn btn-primary">Erstelle Event</button>
+  </form>
+{% endblock %}
